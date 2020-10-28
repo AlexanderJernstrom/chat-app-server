@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import "dotenv/config";
+import dotenv from "dotenv";
 import express from "express";
 import { ApolloServer, PubSub } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -14,14 +14,14 @@ import { ChannelResolver } from "./resolvers/ChannelResolver";
 import { MessageResolver } from "./resolvers/Messageresolver";
 import { createServer } from "http";
 
-export const SECRET = "fsdhfjkasdhjkfhjksdfjkhjkashdfjkhsadkhfkhsdjkfhkjsda";
+dotenv.config();
+export const SECRET = process.env.SECRET;
 
 const init = async () => {
   const pubsub = new PubSub();
   const connection: Connection = await createConnection({
     type: "mongodb",
-    url:
-      "mongodb+srv://alex123:brazil56@cluster0.clowh.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    url: process.env.MONGO_URI,
     entities: [Message, User, Server, Channel],
   });
   const app = express();
