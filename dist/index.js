@@ -30,7 +30,7 @@ const Messageresolver_1 = require("./resolvers/Messageresolver");
 const http_1 = require("http");
 dotenv_1.default.config({ path: __dirname + "/.env" });
 exports.SECRET = process.env.SECRET;
-const init = () => __awaiter(void 0, void 0, void 0, function* () {
+(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log(process.env.MONGO_URI, exports.SECRET);
     const pubsub = new apollo_server_express_1.PubSub();
     const connection = yield typeorm_1.createConnection({
@@ -54,6 +54,8 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             onConnect: (a) => console.log("Connected"),
         },
         tracing: true,
+        playground: true,
+        introspection: true,
     });
     apolloServer.applyMiddleware({ app, path: "/graphql", cors: true });
     const httpServer = http_1.createServer(app);
@@ -61,6 +63,5 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     httpServer.listen(process.env.PORT || 4000, () => {
         console.log(apolloServer.subscriptionsPath);
     });
-});
-init();
+}))();
 //# sourceMappingURL=index.js.map
