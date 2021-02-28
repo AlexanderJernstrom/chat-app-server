@@ -42,6 +42,7 @@ export const SECRET = process.env.SECRET;
     },
     tracing: true,
     playground: true,
+    introspection: true,
   });
 
   apolloServer.applyMiddleware({ app, path: "/graphql", cors: true });
