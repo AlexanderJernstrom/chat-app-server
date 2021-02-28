@@ -34,13 +34,21 @@ export class ServerResolver {
   @Mutation((returns) => Boolean)
   async createServer(@Ctx() { payload }: Context, @Arg("name") name: string) {
     const user = await User.findOne(payload.id);
-
-    await Server.insert({
+    const server = await Server.insert({
       name,
       ownerId: String(payload.id),
       owner: user,
-      members: [],
+      members: [user as User],
     });
+
+    (user as User).serverIds = [
+      ...(user as User).serverIds,
+      server.identifiers[0].id,
+    ];
+    user?.save();
+    //console.log(server.id);
+    //(user as User).serverIds = [...(user as User).serverIds, String(server.id)];
+    //await (user as User).save();
     return true;
   }
 
@@ -48,14 +56,23 @@ export class ServerResolver {
   @Mutation((returns) => Boolean)
   async inviteMember(
     @Ctx() { payload }: Context,
-    @Arg("userId") userId: string,
+    @Arg("email") email: string,
     @Arg("serverId") serverId: string
   ) {
     const server = await Server.findOne(serverId);
-    const user = await User.findOne(userId);
+    const user = await User.findOne({ email });
+    const userExists = await Server.findOne({
+      where: {
+        members: { $in: [user] },
+      },
+    });
+    if (userExists) {
+      return false;
+    }
+    console.log(server?.members);
+    (server as any).members = [...(server as any).members, user];
 
-    (user as any).serverIds = [...(user as any).serverIds, (server as any).id];
-    await getMongoManager().save(user);
+    await server?.save().catch((err) => console.log(err));
 
     return true;
   }
@@ -64,8 +81,8 @@ export class ServerResolver {
   @Query(() => [Server])
   async getServers(@Ctx() { payload }: Context) {
     const user = await User.findOne(String(payload.id));
-
     const servers = await Server.findByIds(user?.serverIds as string[]);
+    console.log(payload.id);
 
     return servers;
   }
@@ -75,13 +92,10 @@ export class ServerResolver {
   async getMembersInServer(
     @Ctx() { payload }: Context,
     @Arg("serverId") serverId: string
-  ) {
-    const res = await getMongoRepository(User).find({
-      where: {
-        serverIds: { $in: [serverId] },
-      },
-    });
-    return res;
+  ): Promise<User[]> {
+    const server = await Server.findOne(serverId);
+    console.log(server);
+    return server?.members as User[];
   }
 
   @UseMiddleware(authorize)
@@ -98,7 +112,6 @@ export class ServerResolver {
         channelId: { $in: channelIds },
       },
     });
-    console.log(messages);
 
     return { server: server as Server, channels, messages };
   }

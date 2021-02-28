@@ -28,8 +28,8 @@ export class Server extends BaseEntity {
   @Field()
   ownerId: string;
 
-  @ManyToMany((type) => User)
-  @JoinTable()
+  @Field((type) => [User])
+  @Column()
   members: User[];
 
   @Field((type) => User)

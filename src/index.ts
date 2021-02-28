@@ -14,10 +14,11 @@ import { ChannelResolver } from "./resolvers/ChannelResolver";
 import { MessageResolver } from "./resolvers/Messageresolver";
 import { createServer } from "http";
 
-dotenv.config();
+dotenv.config({ path: __dirname + "/.env" });
 export const SECRET = process.env.SECRET;
 
 const init = async () => {
+  console.log(process.env.MONGO_URI, SECRET);
   const pubsub = new PubSub();
   const connection: Connection = await createConnection({
     type: "mongodb",

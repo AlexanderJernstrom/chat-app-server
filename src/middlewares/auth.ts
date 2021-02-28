@@ -18,7 +18,7 @@ export const authorize: MiddlewareFn<Context> = ({ context }, next) => {
   }
 
   try {
-    const payload = verify(token as string, SECRET as string);
+    const payload = verify(token as string, process.env.SECRET as string);
     context.payload = payload as any;
   } catch (err) {
     console.log(err);

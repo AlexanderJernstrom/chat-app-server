@@ -61,7 +61,7 @@ export class UserResolver {
     }
 
     return {
-      accessToken: sign({ id: user.id }, SECRET),
+      accessToken: sign({ id: user.id }, process.env.SECRET as string),
     };
   }
 

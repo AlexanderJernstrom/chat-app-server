@@ -69,7 +69,6 @@ export class ChannelResolver {
     @Root() payload: Message,
     @Arg("channelId") channelId: String
   ) {
-    console.log("this ran 1");
     return payload;
   }
 
