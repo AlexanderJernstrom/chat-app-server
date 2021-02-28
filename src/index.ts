@@ -17,7 +17,7 @@ import { createServer } from "http";
 dotenv.config({ path: __dirname + "/.env" });
 export const SECRET = process.env.SECRET;
 
-const init = async () => {
+(async () => {
   console.log(process.env.MONGO_URI, SECRET);
   const pubsub = new PubSub();
   const connection: Connection = await createConnection({
@@ -41,6 +41,7 @@ const init = async () => {
       onConnect: (a) => console.log("Connected"),
     },
     tracing: true,
+    playground: true,
   });
 
   apolloServer.applyMiddleware({ app, path: "/graphql", cors: true });
@@ -52,6 +53,4 @@ const init = async () => {
   httpServer.listen(process.env.PORT || 4000, () => {
     console.log(apolloServer.subscriptionsPath);
   });
-};
-
-init();
+})();
