@@ -43,7 +43,7 @@ const init = async () => {
     tracing: true,
   });
 
-  apolloServer.applyMiddleware({ app, cors: true });
+  apolloServer.applyMiddleware({ app, path: "/graphql", cors: true });
 
   const httpServer = createServer(app);
 
