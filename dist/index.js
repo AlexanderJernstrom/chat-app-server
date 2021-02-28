@@ -55,7 +55,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         },
         tracing: true,
     });
-    apolloServer.applyMiddleware({ app, cors: true });
+    apolloServer.applyMiddleware({ app, path: "/graphql", cors: true });
     const httpServer = http_1.createServer(app);
     apolloServer.installSubscriptionHandlers(httpServer);
     httpServer.listen(process.env.PORT || 4000, () => {
